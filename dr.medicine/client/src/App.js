@@ -1,8 +1,5 @@
 import React, { useEffect } from 'react';
 import Tesseract from 'tesseract.js';
-import axios from 'axios';
-import * as Cheerio from "cheerio";
-
 
 const App = () => {
   const [isLoading, setIsLoading] = React.useState(false);
@@ -10,22 +7,21 @@ const App = () => {
   const [text, setText] = React.useState('');
   const [progress, setProgress] = React.useState(0);
   const [medName, setMedName] = React.useState('');
- 
+  const [summary, setSummary] = React.useState('');
 
+  const delay = (ms) => new Promise(
+    resolve => setTimeout(resolve, ms)
+  );
 
+  var count  =0;
 
-  useEffect(() => {
-    console.log(text);
-  })
-
-
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setIsLoading(true);
     Tesseract.recognize(image, 'eng', {
       logger: (m) => {
-        console.log(m);
         if (m.status === 'recognizing text') {
-          setProgress(parseInt(m.progress * 100));
+            setProgress(parseInt(count + 1));
+            count = count + 1;
         }
       },
     })
@@ -33,20 +29,18 @@ const App = () => {
         console.error(err);
       })
       .then((result) => {
-        console.log(result.data);
         setText(result.data.text);
         setIsLoading(false);
-      });   
-  
+      });
   };
 
-  useEffect(() => {
-    console.log('hellooo')
+  useEffect (() => {
+    // console.log('hellooo')
     GetData()
     function GetData() {
-      var result = text
-      let res = {//declaring the body to send to API
-          name: [result],
+      const result = text
+      let res = {
+          name: [result],                           //declaring the body to send to API
       };
       console.log(res);
   
@@ -73,43 +67,33 @@ const App = () => {
           .then((myJson) => {
               console.log(JSON.stringify(myJson));
               var medname = myJson.name;
+              var sum = myJson.summary;
+
               setMedName(medname)
-              console.log(medname)
+              setSummary(sum)
+              // console.log(medname)
           })
           .catch((err) => {
               console.log("Fetch Error :-S", err);
           });
-
-          // const componentDidMount = () => {
-          //   const url = "https://www.drugs.com/" + `${medName}`
-          //   console.log(url)
-          //   axios.get()
-          //     .then(response => {
-          //       // Process the HTML response
-          //       const html = response.data
-          //       const $ = Cheerio.load(html);
-          //       const articles = $(".row h-100");
-          //       const drugNames = $(articles)
-          //       .map((index, element) => $(element).text())
-          //       .get();
-
-          //       console.log(drugNames)
-          //     })
-          //     .catch(error => {
-          //       // Handle any errors
-          //       console.log(error)
-          //     });
-          // }
-          // componentDidMount()
   
   }
     
 },[text]);
 
   return (
+    <>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light d-flex" style={{justifyContent : "space-between"}}>
+      <a class="navbar-brand p-3" style = {{fontSize : "200%"}} href="#">Dr.medicine</a>
+      <form  style = {{marginRight : "20px"}}>
+      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"/>
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    </form>
+
+    </nav>
     <div className="container" style={{ height: '100vh' }}>
       <div className="row h-100">
-        <div className="col-md-5 mx-auto h-100 d-flex flex-column justify-content-center">
+        <div className="col-md-5 mt-0 mx-auto h-100 d-flex flex-column justify-content-center">
           {!isLoading && (
             <h1 className="text-center py-5 mc-5">Dr.medicine</h1>
           )}
@@ -128,7 +112,7 @@ const App = () => {
                 onChange={(e) =>
                   setImage(URL.createObjectURL(e.target.files[0]))
                 }
-                className="form-control mt-5 mb-2"
+                className="form-control mt-5 mb-0"
               />
               <input
                 type="button"
@@ -141,14 +125,15 @@ const App = () => {
       
           {!isLoading && text && (
             <>
-            <div className='d-flex justify-content-center'>
+            <div className='w-300vw h-50 d-flex justify-content-center' style={{margin : "20px"}}>
               <img className='w-50 h-50' src = {image}></img>
             </div>
+            
+              <h1>{medName}</h1>
               <textarea
-                className="form-control w-100 mt-0"
-                rows="30"
-                // value={(string != "" && isLoading == false ? {handleImageOutput}: "")} 
-                value={text}
+                style = {{width : "40vw", height : "100%", marginLeft : "0"}}
+                rows="50"
+                value={summary}
                 onChange={(e) => setText(e.target.value)}
               ></textarea>
             </>
@@ -156,6 +141,7 @@ const App = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 
