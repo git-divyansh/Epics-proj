@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import Tesseract from 'tesseract.js';
+import About from './About';
 
 const App = () => {
   const [isLoading, setIsLoading] = React.useState(false);
@@ -9,13 +10,14 @@ const App = () => {
   const [medName, setMedName] = React.useState('');
   const [summary, setSummary] = React.useState('');
 
-  const delay = (ms) => new Promise(
-    resolve => setTimeout(resolve, ms)
-  );
+  useEffect(() =>{
+    setIsLoading(false)
+  },[summary])
 
-  var count  =0;
+  const count = 0;
 
   const handleSubmit = async () => {
+
     setIsLoading(true);
     Tesseract.recognize(image, 'eng', {
       logger: (m) => {
@@ -30,12 +32,10 @@ const App = () => {
       })
       .then((result) => {
         setText(result.data.text);
-        setIsLoading(false);
       });
   };
 
   useEffect (() => {
-    // console.log('hellooo')
     GetData()
     function GetData() {
       const result = text
@@ -76,7 +76,6 @@ const App = () => {
           .catch((err) => {
               console.log("Fetch Error :-S", err);
           });
-  
   }
     
 },[text]);
@@ -84,63 +83,67 @@ const App = () => {
   return (
     <>
     <nav class="navbar navbar-expand-lg navbar-light bg-light d-flex" style={{justifyContent : "space-between"}}>
-      <a class="navbar-brand p-3" style = {{fontSize : "200%"}} href="#">Dr.medicine</a>
+      <a class="navbar-brand p-3" style = {{fontSize : "200%", fontWeight: "bold"}} >Dr.medicine</a>
       <form  style = {{marginRight : "20px"}}>
-      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"/>
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">About</button>
     </form>
 
     </nav>
-    <div className="container" style={{ height: '100vh' }}>
+    <div className="container">
       <div className="row h-100">
-        <div className="col-md-5 mt-0 mx-auto h-100 d-flex flex-column justify-content-center">
+        <div className="">
           {!isLoading && (
             <h1 className="text-center py-5 mc-5">Dr.medicine</h1>
           )}
-          {isLoading && (
+          {!isLoading && text &&(
             <>
-              <progress className="form-control" value={progress} max="100">
-                {progress}%{' '}
-              </progress>{' '}
-              <p className="text-center py-0 my-0">Converting:- {progress} %</p>
-            </>
-          )}
-          {!isLoading && !text && (
-            <>
-              <input
-                type="file"
-                onChange={(e) =>
-                  setImage(URL.createObjectURL(e.target.files[0]))
-                }
-                className="form-control mt-5 mb-0"
-              />
-              <input
-                type="button"
-                onClick={handleSubmit}
-                className="btn btn-primary mt-5"
-                value="Convert"
-              />
-            </>
-          )}
-      
-          {!isLoading && text && (
-            <>
-            <div className='w-300vw h-50 d-flex justify-content-center' style={{margin : "20px"}}>
-              <img className='w-50 h-50' src = {image}></img>
+            <div className='container-div'>
+              <img className='med-image' src = {image}></img>
+              <div className='cont'>
+                <h1 className='heading-medname'>{medName}</h1>
+                <textarea
+                  className='description'
+                  value={summary}
+                  onChange={(e) => setText(e.target.value)}
+                  ></textarea>
+              </div>
             </div>
-            
-              <h1>{medName}</h1>
-              <textarea
-                style = {{width : "40vw", height : "100%", marginLeft : "0"}}
-                rows="50"
-                value={summary}
-                onChange={(e) => setText(e.target.value)}
-              ></textarea>
+            </>
+          )}
+          {!isLoading && !text &&(
+            <>
+              <div className='container-input'>
+                <input
+                  type="file"
+                  onChange={(e) =>
+                    setImage(URL.createObjectURL(e.target.files[0]))
+                  }
+                  className="form-control mt-5 mb-0 w-50"
+                />
+                <input
+                  type="button"
+                  onClick={handleSubmit}
+                  className="btn btn-primary mt-5"
+                  value="Convert"
+                />
+              </div>
+            </>
+          )}
+          {isLoading &&(
+            <>
+              <div className='progress-container'>
+                <progress className="form-control" style={{width : "600px"}} value={progress} max="100">
+                  {progress}%{' '}
+                </progress>{' '}
+                <p className="progress-bar">Converting:- {progress} %</p>
+              </div>
             </>
           )}
         </div>
       </div>
     </div>
+    <About />
+
     </>
   );
 };
