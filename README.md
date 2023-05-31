@@ -1,5 +1,5 @@
 # Epics-proj
-The motivation for this project is to help people get better understanding about the medicine they are using. 
+The motivation for this project is to help people get better understanding about the medicine they are using and help them provide them all information on their finger tips. 
 
 ## Explanation
 
