@@ -7,7 +7,6 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 
 
-
 from flask_cors import CORS
 
 app = Flask(__name__)
