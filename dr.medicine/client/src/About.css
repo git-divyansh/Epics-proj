@@ -1,7 +1,7 @@
 
 body{
     font-family: 'Anton', sans-serif;
-    font-family: 'Urbanist', sans-serif;
+    font-family: 'Urbanist', sans-serif; 
 }
 
 .about{
@@ -82,7 +82,7 @@ body{
     padding: 20px 30px;
     font-size: large;
     color: white;
-    letter-spacing: 1cap;
+    /* letter-spacing: 1cap; */
     margin-left: 5%;
     line-height: 25px;
 }
