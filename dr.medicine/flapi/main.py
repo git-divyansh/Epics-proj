@@ -1,3 +1,4 @@
+from flask_cors import CORS
 from flask import Flask,request
 import pandas as pd
 from fuzzywuzzy import process
@@ -8,9 +9,7 @@ from selenium.webdriver.common.by import By
 from dotenv import load_dotenv
 load_dotenv()
 import os
-
-
-from flask_cors import CORS
+  
 
 app = Flask(__name__)
 CORS(app)
@@ -38,10 +37,7 @@ def result():
 
     strs = prediction(rand)
     name = strs[0][0]
-    # print(name)
     conf = strs[0][1]
-    # print(name)
-    # print(conf)
 
 
     def get_drug_info(drug_name):
@@ -50,7 +46,9 @@ def result():
 
         # Configure Chrome options
         chrome_options = Options()
-        chrome_options.add_argument("--headless")  # Run Chrome in headless mode
+
+        # Run Chrome in headless mode
+        chrome_options.add_argument("--headless")  
 
         driver = webdriver.Chrome(service=service, options=chrome_options)
 
@@ -62,7 +60,7 @@ def result():
 
         elements = driver.find_elements(By.CSS_SELECTOR, ".col-xl-10.col-md-9.col-sm-8 p")
         if len(elements) > 1:
-            summary_element = elements[1]  # Extract the second <p> element
+            summary_element = elements[1] 
             summary = summary_element.text.strip()
         else:
             summary = "No summary found"
@@ -71,8 +69,7 @@ def result():
 
         return summary
 
-    drug_info = get_drug_info(name)
-    # print(drug_info)     
+    drug_info = get_drug_info(name) 
 
     cal = {}
 
@@ -81,12 +78,11 @@ def result():
 
     if drug_info:
         cal['summary'] = drug_info
-        # print(cal)
     
     return (cal)
-    # print(cal)
-
-
 
 if __name__ == '__main__':
-    app.run(debug=True, port=0)
+    from waitress import serve
+    app.run(debug=False, host = '0.0.0.0', port=0)
+
+    

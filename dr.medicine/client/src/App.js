@@ -44,13 +44,13 @@ const App = () => {
       };
       console.log(res);
   
-      fetch("https://backendflapi.onrender.com/", {
+      fetch("http://127.0.0.1:2000", {
           method: "POST",
           body: JSON.stringify({
               name: result,
           }),
           headers: {
-              "Content-type": "application/json; charset=UTF-8",
+              "Content-type": "application/json",
               "Access-Control-Allow-Origin": "*",
           },
           mode : 'cors'
